@@ -77,3 +77,8 @@ export const merge = (a, b) => {
   }
   return out;
 };
+
+/** Escape a string for safe interpolation into innerHTML (issue #11: story
+ * captions come from `?config=` and reach the built page's DOM). */
+export const esc = (s) =>
+  String(s ?? '').replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'})[c]);

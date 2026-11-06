@@ -1,4 +1,4 @@
-import {clamp01, easeOutExpo, fmt, hash, smooth} from './util.js';
+import {clamp01, easeOutExpo, esc, fmt, hash, smooth} from './util.js';
 
 /**
  * The director edits a sim to the music: hard cuts between wide and tight
@@ -233,9 +233,12 @@ export function createDirector(app, cfg) {
       }
       if (built !== cur.i) {
         built = cur.i;
+        // Everything below can arrive through `?config=` (#11): escape it before
+        // it reaches innerHTML, and keep the class name to a plain word.
+        const kind = /^[\w-]+$/.test(cur.kind || '') ? cur.kind : 'hero';
         const words = (cur.text || '').split(/\s+/).filter(Boolean);
-        storyEl.innerHTML = `<div class="cap ${cur.kind || 'hero'}">
-          ${cur.tag ? `<div class="cap-tag">${cur.tag}</div>` : ''}
+        storyEl.innerHTML = `<div class="cap ${kind}">
+          ${cur.tag ? `<div class="cap-tag">${esc(cur.tag)}</div>` : ''}
           <div class="cap-main">${
             cur.kind === 'num'
               ? `<span class="w"><span class="n"></span></span>`
@@ -249,12 +252,12 @@ export function createDirector(app, cfg) {
                       if (open) on = true;
                       const hl = on;
                       if (close) on = false;
-                      return `<span class="w${hl ? ' hl' : ''}">${w.replace(/^\*|\*$/g, '')}</span>`;
+                      return `<span class="w${hl ? ' hl' : ''}">${esc(w.replace(/^\*|\*$/g, ''))}</span>`;
                     })
                     .join(' ');
                 })()
           }</div>
-          ${cur.sub ? `<div class="cap-sub"></div>` : ''}
+          ${cur.sub ? `<div class="cap-sub">${esc(cur.sub)}</div>` : ''}
         </div>`;
         parts = {
           words: [...storyEl.querySelectorAll('.w')],

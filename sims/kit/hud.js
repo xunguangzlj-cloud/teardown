@@ -1,4 +1,4 @@
-import {clamp01, pad} from './util.js';
+import {clamp01, esc, pad} from './util.js';
 
 /**
  * Instrument-style HUD: header with stage/command/clock, annotations over the
@@ -95,7 +95,7 @@ export function createHud(root, cfg) {
     return i;
   };
   const fill = (text, facts) => text.replace(/\{(\w+)\}/g, (m, k) => (k in facts ? facts[k] : m));
-  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  // esc comes from util.js — the stronger version also covers quote contexts.
 
   let lastStats = '';
   let lastLogs = '';
